@@ -1,37 +1,26 @@
 import tkinter as tkr
+from random import *
 def main():
     canvas = affichetk()
-    Maze = ["+--+-----+---------+",
-            "|  |     |         |",
-            "|  |  +  |  +  +   |",
-            "|  +  |  +  |  |   |",
-            "|     |     |  |   |",
-            "|  +--+--+--+  |   |",
-            "|  |     |  +--+   |",
-            "|  +  +  |         |",
-            "|     |  |  +------+",
-            "+-----+  |  |      |",
-            "|        |  |   +  |",
-            "|  +-----+  +   |  |",
-            "|  |            |  |",
-            "|  |  +---------+  |",
-            "|  |            |  |",
-            "|  |  +-----+---+  |",
-            "|  |        |      |",
-            "|  +-----+  +------+",
-            "|        |         |",
-            "+--------+---------+]"]
+    #Maze = ["+--+-----+---------+","|  |     |         |","|  +  +  |  +  +   |","|     |  +  |  |   |","|     |     |  |   |","|  +--+--+--+  |   |","|  |     |  +--+   |","|  +  +  |         |","|     |  |  +------+","+-----+  |  |      |","|        |  |   +  |","|  +-----+  +   |  |","|  |            |  |","|  |  +---------+  |","|  |            |  |","|  |  +-----+---+  |","|  |        |      |","|  +-----+  +------+","|        |         |","+--------+---------+]"]
+    Maze = mazeborder(20,20)
+    Maze = generatemaze(1,1,Maze)
+    print(Maze)
     showmaze(Maze)
     showmazetk(canvas,Maze)
     tkr.mainloop()
 
 def mazeborder(width,height):
+    if width%2 != 1:
+        width+=1
+    if height%2 != 1:
+        height+=1
     Maze = [['.'] * width for _ in range(height)]
     for i in range(height):
-        if i == 0 or i == height-1:
-            Maze[i]="".join(["+","-"*(width-2),"+"])
+        if i %2 ==  0:
+            Maze[i]="".join(["+","-+"*(int((width-2)/2))])
         else:
-            Maze[i]="".join(["|"," "*(width-2),"|"])
+            Maze[i]="".join(["|"," |"*(int((width-2)/2))])
     return Maze
 
 def showmaze(Maze):
@@ -73,7 +62,7 @@ def showmazetk(canvas,Maze):
                 canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*(i-0.5),minimum+ratiowidth*j,minimum+ratioheight*(i+0.5))
             elif Maze[i][j] == "+":
                 create_circle(minimum+ratiowidth*j,minimum+ratioheight*i,3,canvas)
-                pos = Plus(Maze,j,i,width,height)
+                pos = Plus(Maze,j,i)
                 if pos[0] != 0:
                     canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*i,minimum+ratiowidth*(j-0.5),minimum+ratioheight*i)
                 if pos[1] != 0:
@@ -82,6 +71,8 @@ def showmazetk(canvas,Maze):
                     canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*i,minimum+ratiowidth*j,minimum+ratioheight*(i-0.5))
                 if pos[3] != 0:
                     canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*i,minimum+ratiowidth*j,minimum+ratioheight*(i+0.5))
+            elif Maze[i][j] == ".":
+                create_circle(minimum+ratiowidth*j,minimum+ratioheight*i,3,canvas)
         Maze[i] = "".join(Maze[i])
         
 def create_circle(x, y, r, canvasName):
@@ -91,8 +82,10 @@ def create_circle(x, y, r, canvasName):
     y1 = y + r
     return canvasName.create_oval(x0, y0, x1, y1,fill='black')
 
-def Plus(Maze,x,y,w,h):
+def Plus(Maze,x,y):
     pos = [0,0,0,0]
+    h = len(Maze)
+    w = len(Maze[0])  
     if x != 0:
         if list(Maze[y])[x-1] == "-" or list(Maze[y])[x-1] == "+":
             pos = ["G",0,0,0]
@@ -107,20 +100,54 @@ def Plus(Maze,x,y,w,h):
             pos[3] = "B"
     return pos
 
-def generatemaze(nbr):
-    #|version|
-    # 1|width|height|1-,2 ,3|,4+.*width|*height
-    1+1
+def generatemaze(x,y,Maze):
+    Maz = list(Maze[y])
+    Maz[x] = "0"
+    Maze[y] = "".join(Maz)
+    for i in range(4):
+        Result = ChangePos(Maze,x,y)
+        if len(Result) != 1:
+            list(Maze[y])[x] = "."
+            x = Result[0]
+            y = Result[1]
+        else :
+            list(Maze[y])[x] = "0"
+    return Maze
     
-def convertecode():
-    v = int(input("Qu'elle version?"))
-    if v == 1:
-        w=int(input("Largeur?"))
-        h=int(input("Hauteur?"))
-        val = []
-        for i in range(h):
-            val.append(input(i+1))
-            for ligne in range(len(val)):
-                print(str(ligne+1)+val[ligne])
+def Visit(Maze,x,y):
+    h = len(Maze)
+    w = len(Maze[0]) 
+    pos = [0,0,0,0]
+    if x != 1:
+        if list(Maze[y])[x-2] != "." or list(Maze[y])[x-2] != "0":
+            pos = ["G",0,0,0]
+    if x != w-2:
+        if list(Maze[y])[x+2] != "." or list(Maze[y])[x+2] != "0":
+            pos[1] = "D"
+    if y != 1:
+        if list(Maze[y-2])[x] != "." or list(Maze[y-2])[x] != "0":
+            pos[2] = "H"
+    if y != h-2:
+        if list(Maze[y+2])[x] != "." or list(Maze[y+2])[x] != "0":
+            pos[3] = "B"
+    return pos
+
+def ChangePos(Maze,x,y):
+    Posib = Visit(Maze,x,y)
+    while 0 in Posib:
+        Posib.remove(0)
+    if len(Posib)==0:
+        Result = [0]
+    else:
+        Posib = choice(Posib)   
+        if Posib == "B":
+            Result = [x,y+2]
+        elif Posib == "G":
+            Result = [x-2,y]
+        elif Posib == "D":
+            Result = [x+2,y]
+        else:
+            Result = [x,y+2]
+    return Result
 main()
 
