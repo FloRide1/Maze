@@ -3,9 +3,8 @@ from random import *
 def main():
     canvas = affichetk()
     #Maze = ["+--+-----+---------+","|  |     |         |","|  +  +  |  +  +   |","|     |  +  |  |   |","|     |     |  |   |","|  +--+--+--+  |   |","|  |     |  +--+   |","|  +  +  |         |","|     |  |  +------+","+-----+  |  |      |","|        |  |   +  |","|  +-----+  +   |  |","|  |            |  |","|  |  +---------+  |","|  |            |  |","|  |  +-----+---+  |","|  |        |      |","|  +-----+  +------+","|        |         |","+--------+---------+]"]
-    Maze = mazeborder(20,20)
+    Maze = mazeborder(100,100)
     Maze = generatemaze(1,1,Maze)
-    print(Maze)
     showmaze(Maze)
     showmazetk(canvas,Maze)
     tkr.mainloop()
@@ -71,8 +70,10 @@ def showmazetk(canvas,Maze):
                     canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*i,minimum+ratiowidth*j,minimum+ratioheight*(i-0.5))
                 if pos[3] != 0:
                     canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*i,minimum+ratiowidth*j,minimum+ratioheight*(i+0.5))
+            #elif Maze[i][j] == "0":
+                #canvas.create_rectangle(minimum+ratiowidth*(j-0.9),minimum+ratioheight*(i-0.9),minimum+ratiowidth*(j+0.9),minimum+ratioheight*(i+0.9),fill="#000fff000")
             elif Maze[i][j] == ".":
-                create_circle(minimum+ratiowidth*j,minimum+ratioheight*i,3,canvas)
+                canvas.create_rectangle(minimum+ratiowidth*(j-0.75),minimum+ratioheight*(i-0.75),minimum+ratiowidth*(j+0.75),minimum+ratioheight*(i+0.75),fill="orange")
         Maze[i] = "".join(Maze[i])
         
 def create_circle(x, y, r, canvasName):
@@ -101,34 +102,70 @@ def Plus(Maze,x,y):
     return pos
 
 def generatemaze(x,y,Maze):
-    Maz = list(Maze[y])
-    Maz[x] = "0"
-    Maze[y] = "".join(Maz)
-    for i in range(4):
-        Result = ChangePos(Maze,x,y)
-        if len(Result) != 1:
-            list(Maze[y])[x] = "."
-            x = Result[0]
-            y = Result[1]
-        else :
-            list(Maze[y])[x] = "0"
+    h = len(Maze)
+    w = len(Maze[0])
+    temp = list(Maze[y])
+    temp[x] = "0"
+    OldPos = []
+    NbrAll = 1
+    Maze[y] = "".join(temp)
+    while NbrAll < (h/2)*(w/2)-1:
+        end = False
+        while not(end) :
+            Result = ChangePos(Maze,x,y)
+            if len(Result) != 1:
+                OldPos.append([x,y])
+                x = Result[0]
+                y = Result[1]
+                if list(Maze[y])[x] == " ":
+                    temp = list(Maze[y])
+                    temp[x] = "."
+                    Maze[y] = "".join(temp)
+                ax = Result[2]
+                ay = Result[3]
+                temp = list(Maze[y+ay])
+                temp[x+ax] = " "
+                Maze[y+ay] = "".join(temp)
+            else :
+                temp = list(Maze[y])
+                temp[x] = "0"
+                Maze[y] = "".join(temp)
+                NbrAll += 1
+                end = True
+        end = False
+        while not(end):
+            if len(OldPos)-1 != 0:
+                Pos = OldPos[len(OldPos)-1]
+                x = Pos[0]
+                y = Pos[1]
+                if len(ChangePos(Maze,x,y)) == 1:
+                    temp = list(Maze[y])
+                    temp[x] = "0"
+                    Maze[y] = "".join(temp)
+                    NbrAll += 1
+                    del OldPos[-1]
+                else :
+                    end = True
+            else :
+                end = True
+    print(NbrAll)
     return Maze
     
 def Visit(Maze,x,y):
     h = len(Maze)
-    w = len(Maze[0]) 
+    w = len(Maze[0])
     pos = [0,0,0,0]
     if x != 1:
-        if list(Maze[y])[x-2] != "." or list(Maze[y])[x-2] != "0":
+        if list(Maze[y])[x-2] != "." and list(Maze[y])[x-2] != "0":
             pos = ["G",0,0,0]
     if x != w-2:
-        if list(Maze[y])[x+2] != "." or list(Maze[y])[x+2] != "0":
+        if list(Maze[y])[x+2] != "." and list(Maze[y])[x+2] != "0":
             pos[1] = "D"
     if y != 1:
-        if list(Maze[y-2])[x] != "." or list(Maze[y-2])[x] != "0":
+        if list(Maze[y-2])[x] != "." and list(Maze[y-2])[x] != "0":
             pos[2] = "H"
     if y != h-2:
-        if list(Maze[y+2])[x] != "." or list(Maze[y+2])[x] != "0":
+        if list(Maze[y+2])[x] != "." and list(Maze[y+2])[x] != "0":
             pos[3] = "B"
     return pos
 
@@ -141,13 +178,16 @@ def ChangePos(Maze,x,y):
     else:
         Posib = choice(Posib)   
         if Posib == "B":
-            Result = [x,y+2]
+            Result = [x,y+2,0,-1]
         elif Posib == "G":
-            Result = [x-2,y]
+            Result = [x-2,y,1,0]
         elif Posib == "D":
-            Result = [x+2,y]
-        else:
-            Result = [x,y+2]
+            Result = [x+2,y,-1,0]
+        elif Posib == "H":
+            Result = [x,y-2,0,1]
     return Result
+
+    
+    
 main()
 
