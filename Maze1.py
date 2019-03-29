@@ -3,24 +3,12 @@ from random import *
 def main():
     canvas = affichetk()
     #Maze = ["+--+-----+---------+","|  |     |         |","|  +  +  |  +  +   |","|     |  +  |  |   |","|     |     |  |   |","|  +--+--+--+  |   |","|  |     |  +--+   |","|  +  +  |         |","|     |  |  +------+","+-----+  |  |      |","|        |  |   +  |","|  +-----+  +   |  |","|  |            |  |","|  |  +---------+  |","|  |            |  |","|  |  +-----+---+  |","|  |        |      |","|  +-----+  +------+","|        |         |","+--------+---------+]"]
-    Maze = mazeborder(100,100)
-    Maze = generatemaze(1,1,Maze)
+    Maze = generatemaze(1,1,10,10)
+    #Maze = mazeborder(10,10)
     showmaze(Maze)
     showmazetk(canvas,Maze)
     tkr.mainloop()
 
-def mazeborder(width,height):
-    if width%2 != 1:
-        width+=1
-    if height%2 != 1:
-        height+=1
-    Maze = [['.'] * width for _ in range(height)]
-    for i in range(height):
-        if i %2 ==  0:
-            Maze[i]="".join(["+","-+"*(int((width-2)/2))])
-        else:
-            Maze[i]="".join(["|"," |"*(int((width-2)/2))])
-    return Maze
 
 def showmaze(Maze):
     print("\n".join(Maze))
@@ -55,12 +43,12 @@ def showmazetk(canvas,Maze):
     for i in range(height):
         Maze[i] = list(Maze[i])
         for j in range(width):
-            if Maze[i][j] == "-":
+            if Maze[i][j] == "─":
                 canvas.create_line(minimum+ratiowidth*(j-0.5),minimum+ratioheight*i,minimum+ratiowidth*(j+0.5),minimum+ratioheight*i)
-            elif Maze[i][j] == "|":
+            elif Maze[i][j] == "│":
                 canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*(i-0.5),minimum+ratiowidth*j,minimum+ratioheight*(i+0.5))
-            elif Maze[i][j] == "+":
-                create_circle(minimum+ratiowidth*j,minimum+ratioheight*i,3,canvas)
+            elif Maze[i][j] == "┼" or Maze[i][j] == "┘" or Maze[i][j] == "┐" or Maze[i][j] == "┬" or Maze[i][j] == "┴" or Maze[i][j] == "├" or Maze[i][j] == "┤" or Maze[i][j] == "┌" or Maze[i][j] == "└":
+                #create_circle(minimum+ratiowidth*j,minimum+ratioheight*i,3,canvas)
                 pos = Plus(Maze,j,i)
                 if pos[0] != 0:
                     canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*i,minimum+ratiowidth*(j-0.5),minimum+ratioheight*i)
@@ -70,8 +58,10 @@ def showmazetk(canvas,Maze):
                     canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*i,minimum+ratiowidth*j,minimum+ratioheight*(i-0.5))
                 if pos[3] != 0:
                     canvas.create_line(minimum+ratiowidth*j,minimum+ratioheight*i,minimum+ratiowidth*j,minimum+ratioheight*(i+0.5))
-            #elif Maze[i][j] == "0":
-                #canvas.create_rectangle(minimum+ratiowidth*(j-0.9),minimum+ratioheight*(i-0.9),minimum+ratiowidth*(j+0.9),minimum+ratioheight*(i+0.9),fill="#000fff000")
+            elif Maze[i][j] == "1":
+                canvas.create_rectangle(minimum+ratiowidth*(j-0.9),minimum+ratioheight*(i-0.9),minimum+ratiowidth*(j+0.9),minimum+ratioheight*(i+0.9),fill="#000fff000")
+            elif Maze[i][j] == "2":
+                canvas.create_rectangle(minimum+ratiowidth*(j-0.9),minimum+ratioheight*(i-0.9),minimum+ratiowidth*(j+0.9),minimum+ratioheight*(i+0.9),fill="red")
             elif Maze[i][j] == ".":
                 canvas.create_rectangle(minimum+ratiowidth*(j-0.75),minimum+ratioheight*(i-0.75),minimum+ratiowidth*(j+0.75),minimum+ratioheight*(i+0.75),fill="orange")
         Maze[i] = "".join(Maze[i])
@@ -88,28 +78,26 @@ def Plus(Maze,x,y):
     h = len(Maze)
     w = len(Maze[0])  
     if x != 0:
-        if list(Maze[y])[x-1] == "-" or list(Maze[y])[x-1] == "+":
+        if list(Maze[y])[x-1] == "-" or list(Maze[y])[x-1] == "+" or list(Maze[y])[x-1] == "─":
             pos = ["G",0,0,0]
     if x != w-1:
-        if list(Maze[y])[x+1] == "-" or list(Maze[y])[x+1] == "+":
+        if list(Maze[y])[x+1] == "-" or list(Maze[y])[x+1] == "+" or list(Maze[y])[x+1] == "─":
             pos[1] = "D"
     if y != 0:
-        if list(Maze[y-1])[x] == "|" or list(Maze[y-1])[x] == "+":
+        if list(Maze[y-1])[x] == "|" or list(Maze[y-1])[x] == "+" or list(Maze[y-1])[x] == "│":
             pos[2] = "H"
     if y != h-1:
-        if list(Maze[y+1])[x] == "|" or list(Maze[y+1])[x] == "+":
+        if list(Maze[y+1])[x] == "|" or list(Maze[y+1])[x] == "+" or list(Maze[y+1])[x] == "│":
             pos[3] = "B"
     return pos
 
-def generatemaze(x,y,Maze):
-    h = len(Maze)
-    w = len(Maze[0])
+def generatemaze(x,y,w,h):
+    Maze = mazeborder(w,h)
     temp = list(Maze[y])
     temp[x] = "0"
     OldPos = []
-    NbrAll = 1
     Maze[y] = "".join(temp)
-    while NbrAll < (h/2)*(w/2)-1:
+    while not(Finish(Maze)):
         end = False
         while not(end) :
             Result = ChangePos(Maze,x,y)
@@ -124,13 +112,12 @@ def generatemaze(x,y,Maze):
                 ax = Result[2]
                 ay = Result[3]
                 temp = list(Maze[y+ay])
-                temp[x+ax] = " "
+                temp[x+ax] = "?"
                 Maze[y+ay] = "".join(temp)
             else :
                 temp = list(Maze[y])
                 temp[x] = "0"
                 Maze[y] = "".join(temp)
-                NbrAll += 1
                 end = True
         end = False
         while not(end):
@@ -142,30 +129,45 @@ def generatemaze(x,y,Maze):
                     temp = list(Maze[y])
                     temp[x] = "0"
                     Maze[y] = "".join(temp)
-                    NbrAll += 1
                     del OldPos[-1]
                 else :
                     end = True
             else :
                 end = True
-    print(NbrAll)
+
+    Maze = Adapt(Maze)
+    temp = list(Maze[1])
+    temp[1] = "1"
+    Maze[1] = "".join(temp)
+    temp = list(Maze[h*2-1])
+    temp[w*2-1] = "2"
+    Maze[h*2-1] = "".join(temp)
     return Maze
-    
+
+def mazeborder(width,height):
+    Maze = [[] * width for _ in range(height*2+1)]
+    for i in range(height*2+1):
+        if i % 2 ==  0:
+            Maze[i]="".join(["+","-+" * (width)])
+        else:
+            Maze[i]="".join(["|"," |" * (width)])
+    return Maze
+
 def Visit(Maze,x,y):
     h = len(Maze)
     w = len(Maze[0])
     pos = [0,0,0,0]
     if x != 1:
-        if list(Maze[y])[x-2] != "." and list(Maze[y])[x-2] != "0":
+        if list(Maze[y])[x-2] == " ":
             pos = ["G",0,0,0]
     if x != w-2:
-        if list(Maze[y])[x+2] != "." and list(Maze[y])[x+2] != "0":
+        if list(Maze[y])[x+2] == " ":
             pos[1] = "D"
     if y != 1:
-        if list(Maze[y-2])[x] != "." and list(Maze[y-2])[x] != "0":
+        if list(Maze[y-2])[x] == " ":
             pos[2] = "H"
     if y != h-2:
-        if list(Maze[y+2])[x] != "." and list(Maze[y+2])[x] != "0":
+        if list(Maze[y+2])[x] == " ":
             pos[3] = "B"
     return pos
 
@@ -187,7 +189,61 @@ def ChangePos(Maze,x,y):
             Result = [x,y-2,0,1]
     return Result
 
-    
-    
+def Finish(Maze):
+    Result = True
+    for i in Maze:
+        if " " in i:
+            Result = False
+    return Result
+
+def Adapt(Maze):
+    for y in range(len(Maze)):
+        if "?" in Maze[y]:
+            Maze[y] = " ".join((Maze[y]).split("?"))
+        if "0" in Maze[y]:
+            Maze[y] = " ".join((Maze[y]).split("0"))
+        if "|" in Maze[y]:
+            Maze[y] = "│".join((Maze[y]).split("|"))
+        if "-" in Maze[y]:
+            Maze[y] = "─".join((Maze[y]).split("-"))
+        while "+" in Maze[y]:
+            x = Maze[y].index("+")
+            Result = Plus(Maze,x,y)
+            if Result == ["G",0,0,0]:
+                Style = "─"
+            elif Result == [0,"D",0,0]:
+                Style = "─"
+            elif Result == [0,0,"H",0]:
+                Style = "│"
+            elif Result == [0,0,0,"B"]:
+                Style = "│"
+            elif Result == ["G","D",0,0]:
+                Style = "─"
+            elif Result == [0,0,"H","B"]:
+                Style = "│"
+            elif Result == ["G",0,"H",0]:
+                Style = "┘"
+            elif Result == ["G",0,0,"B"]:
+                Style = "┐"
+            elif Result == [0,"D","H",0]:
+                Style = "└"
+            elif Result == [0,"D",0,"B"]:
+                Style = "┌"
+            elif Result == ["G",0,"H","B"]:
+                Style = "┤"
+            elif Result == [0,"D","H","B"]:
+                Style = "├"
+            elif Result == ["G","D","H",0]:
+                Style = "┴"
+            elif Result == ["G","D",0,"B"]:
+                Style = "┬"
+            else :
+                Style = "┼"
+            temp = list(Maze[y])
+            temp[x] = Style
+            Maze[y] = "".join(temp)
+            
+    return Maze
+
 main()
 
