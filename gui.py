@@ -1,27 +1,9 @@
-import tkinter as tkr
+from tkinter import filedialog
+import tkinter
+
 def showmaze(Maze):
     print("\n".join(Maze))
-
-def affichetk():
-    window = tkr.Tk()
-    canvas = tkr.Canvas(window, width=1000, height=1000, background='white')
-    canvas.grid()
-    
-    
-    #Bordure
-    minimum = 10
-    maximum = 990
-    
-    canvas.create_line(minimum,minimum,minimum,maximum)
-    canvas.create_line(minimum,minimum,maximum,minimum)
-    canvas.create_line(minimum,maximum,maximum,maximum)
-    canvas.create_line(maximum,minimum,maximum,maximum)
-    
-    canvas.pack()
-    
-    return canvas
-
-
+	
 def showmazetk(canvas,Maze):
     minimum = 20
     maximum = 980
@@ -79,3 +61,16 @@ def Plus(Maze,x,y):
         if list(Maze[y+1])[x] == "|" or list(Maze[y+1])[x] == "+" or list(Maze[y+1])[x] == "│":
             pos[3] = "B"
     return pos
+
+def ExportFile():
+    f=tkinter.filedialog.asksaveasfile(
+    title="Enregistrer sous … un fichier",
+    filetypes=[('MAZE files','.maze')])
+    print(f.name)
+
+def ImportFile():
+    f=tkinter.filedialog.askopenfilename(
+    title="Ouvrir une labyrinthe",
+    filetypes=[('MAZE files','.maze')])
+    print(f.name)
+    

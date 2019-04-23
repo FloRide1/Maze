@@ -1,5 +1,6 @@
 from random import *
 from gui import Plus
+
 def generatemaze(x,y,w,h):
     Maze = mazeborder(w,h)
     temp = list(Maze[y])
