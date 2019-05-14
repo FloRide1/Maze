@@ -64,7 +64,7 @@ def Plus(Maze,x,y):
 
 def ExportFile():
     f=tkinter.filedialog.asksaveasfile(
-    title="Enregistrer sous … un fichier",
+    title="Enregistrer le labyrinthe",
     filetypes=[('MAZE files','.maze')])
     print(f.name)
 

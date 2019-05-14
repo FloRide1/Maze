@@ -5,7 +5,7 @@ from ia import *
 
 def main():
     global canvas
-    canvas = affichetk()
+    #canvas = affichetk()
     #Maze = ["+--+-----+---------+","|  |     |         |","|  +  +  |  +  +   |","|     |  +  |  |   |","|     |     |  |   |","|  +--+--+--+  |   |","|  |     |  +--+   |","|  +  +  |         |","|     |  |  +------+","+-----+  |  |      |","|        |  |   +  |","|  +-----+  +   |  |","|  |            |  |","|  |  +---------+  |","|  |            |  |","|  |  +-----+---+  |","|  |        |      |","|  +-----+  +------+","|        |         |","+--------+---------+]"]
     #Maze = mazeborder(10,10)
     
@@ -86,17 +86,15 @@ def Test():
     frame2.pack()
     frame3.pack()
 
-
     
 def Mazetk():
     x = ScaleX.get()
     y = ScaleY.get()
     canvas.delete("all")
-    Maze = generatemaze(1,1,x,y)
+    Maze = backtracking(1,1,x,y)
     showmaze(Maze)
     showmazetk(canvas,Maze)
 
 
 main()
-
-
+#showmaze(Fusion(10,10))

@@ -1,7 +1,7 @@
-from random import *
+from random import randint
 from gui import Plus
 
-def generatemaze(x,y,w,h):
+def backtracking(x,y,w,h):
     Maze = mazeborder(w,h)
     temp = list(Maze[y])
     temp[x] = "0"
@@ -154,3 +154,55 @@ def Adapt(Maze):
             Maze[y] = "".join(temp)
             
     return Maze
+
+def Fusion(w,h):
+    Maze = mazeborder(w,h)
+    nbr = 0
+    for i in range(h):
+        temp = list(Maze[2*i+1])     
+        for j in range(w):
+            temp[2*j+1] = str(nbr)
+            nbr += 1
+        Maze[2*i] = list(Maze[2*i])
+        Maze[2*i+1] = temp
+    while not(MazeFinish(Maze)):
+        Alx = randint(1,2*w-2)
+        Aly = randint(1,2*h-2)
+        wall = Maze[Aly][Alx]
+        if wall == "-":
+            Hover = Maze[Aly-1][Alx]
+            Botom = Maze[Aly+1][Alx]
+            if Hover != Botom:
+                Maze[Aly][Alx] = " "
+                if Hover < Botom:
+                    Maze = Transform(Maze,Botom,Hover)
+                else:
+                    Maze = Transform(Maze,Hover,Botom)
+        elif wall == "|":
+            Rigt = Maze[Aly][Alx+-1]
+            Left = Maze[Aly][Alx-1]
+            if Rigt != Left:
+                Maze[Aly][Alx] = " "
+                if Rigt < Left:
+                    Maze = Transform(Maze,Left,Rigt)
+                else:
+                    Maze = Transform(Maze,Rigt,Left)
+    for i in range(len(Maze)):
+        Maze[i] = "".join(Maze[i])
+    Maze = Adapt(Maze)
+    return Maze
+
+def Transform(Maz,Last,New):
+    Maze = Maz
+    for i in range(len(Maze)):
+        for j in range(Maze[i].count(Last)):
+            Maze[i][Maze[i].index(Last)] = New
+    return Maze
+
+def MazeFinish(Maze):
+    Finish = True
+    nbr = len(Maze[1])/2
+    for i in range(len(Maze)):
+        if Maze.count("0") != nbr:
+              Finish = False
+    return Finish
