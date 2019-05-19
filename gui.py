@@ -1,8 +1,11 @@
 from tkinter import filedialog
 import tkinter
+from ia import getGraph
+from random import choice
 
 def showmaze(Maze):
     print("\n".join(Maze))
+    
 	
 def showmazetk(canvas,Maze):
     minimum = 20
@@ -36,13 +39,46 @@ def showmazetk(canvas,Maze):
             elif Maze[i][j] == ".":
                 canvas.create_rectangle(minimum+ratiowidth*(j-0.75),minimum+ratioheight*(i-0.75),minimum+ratiowidth*(j+0.75),minimum+ratioheight*(i+0.75),fill="orange")
         Maze[i] = "".join(Maze[i])
-        
+
+def showgraphTk(canvas,Maze):
+    minimum = 20
+    maximum = 980
+    height = len(Maze)
+    width = len(Maze[0])
+    ratiowidth = maximum/width
+    ratioheight = maximum/height
+    Graph = getGraph(Maze)
+    S = Graph[0]
+    A = Graph[1]
+    Spos= Graph[2]
+    P = Graph[3]
+    for i in range(len(P)):
+        color = "#"
+        for c in range(6):
+            color = color + choice(["1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"])
+        for j in range(len(P[i])):
+            if j != 0:
+                a = P[i][j-1][0]
+                b = P[i][j-1][1]
+                x = P[i][j][0]
+                y = P[i][j][1]
+                #create_circle(minimum+ratiowidth*x,minimum+ratioheight*y,3,canvas)
+                canvas.create_line(minimum+ratiowidth*a,minimum+ratioheight*b,minimum+ratiowidth*x,minimum+ratioheight*y,width=(ratiowidth+ratioheight)/20, fill=color)
+    for i in range(len(S)):
+        x = Spos[i][0]
+        y = Spos[i][1]
+        create_circle(minimum+ratiowidth*x,minimum+ratioheight*y,(ratiowidth+ratioheight)/2/8,canvas)
+                       
+    
 def create_circle(x, y, r, canvasName):
+    color = "#"
+    for c in range(6):
+        color = color + choice(["1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"])
     x0 = x - r
     y0 = y - r
     x1 = x + r
     y1 = y + r
-    return canvasName.create_oval(x0, y0, x1, y1,fill='black')
+    return canvasName.create_oval(x0, y0, x1, y1,fill=color)
 
 def Plus(Maze,x,y):
     pos = [0,0,0,0]

@@ -5,7 +5,7 @@ from ia import *
 
 def main():
     global canvas
-    #canvas = affichetk()
+    canvas = affichetk()
     #Maze = ["+--+-----+---------+","|  |     |         |","|  +  +  |  +  +   |","|     |  +  |  |   |","|     |     |  |   |","|  +--+--+--+  |   |","|  |     |  +--+   |","|  +  +  |         |","|     |  |  +------+","+-----+  |  |      |","|        |  |   +  |","|  +-----+  +   |  |","|  |            |  |","|  |  +---------+  |","|  |            |  |","|  |  +-----+---+  |","|  |        |      |","|  +-----+  +------+","|        |         |","+--------+---------+]"]
     #Maze = mazeborder(10,10)
     
@@ -17,6 +17,7 @@ def affichetk():
     M1 = tkinter.Menu(MenuBar, tearoff=0)
     M1.add_command(label="Crée", command=Test)
     M1.add_command(label="Résoudre", command=print(11))
+    M1.add_command(label="Graph", command=showgraph)
     M1.add_separator() 
     M1.add_command(label="Importer", command=ImportFile)
     M1.add_command(label="Exporter", command=ExportFile)
@@ -91,10 +92,13 @@ def Mazetk():
     x = ScaleX.get()
     y = ScaleY.get()
     canvas.delete("all")
+    global Maze
     Maze = backtracking(1,1,x,y)
-    showmaze(Maze)
+    #showmaze(Maze)
     showmazetk(canvas,Maze)
 
-
+def showgraph():
+    showgraphTk(canvas,Maze)
+    
 main()
 #showmaze(Fusion(10,10))

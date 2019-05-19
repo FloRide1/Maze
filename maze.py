@@ -1,5 +1,5 @@
-from random import randint
-from gui import Plus
+from random import *
+from gui import *
 
 def backtracking(x,y,w,h):
     Maze = mazeborder(w,h)
@@ -152,7 +152,6 @@ def Adapt(Maze):
             temp = list(Maze[y])
             temp[x] = Style
             Maze[y] = "".join(temp)
-            
     return Maze
 
 def Fusion(w,h):
@@ -165,30 +164,35 @@ def Fusion(w,h):
             nbr += 1
         Maze[2*i] = list(Maze[2*i])
         Maze[2*i+1] = temp
-    while not(MazeFinish(Maze)):
+    
+    while not(MazeFinish(Maze,w,h)):
         Alx = randint(1,2*w-2)
         Aly = randint(1,2*h-2)
         wall = Maze[Aly][Alx]
+        print("X : ",Alx," Y : ",Aly, " Wall : ",wall)
         if wall == "-":
             Hover = Maze[Aly-1][Alx]
             Botom = Maze[Aly+1][Alx]
+            print("Wall : ",wall," Hover : ",Hover," Bottom : ",Botom)
             if Hover != Botom:
                 Maze[Aly][Alx] = " "
                 if Hover < Botom:
                     Maze = Transform(Maze,Botom,Hover)
                 else:
                     Maze = Transform(Maze,Hover,Botom)
+            #print(showmaze(Adapt(FusionAdapt(Maze))))
         elif wall == "|":
-            Rigt = Maze[Aly][Alx+-1]
+            Rigt = Maze[Aly][Alx+1]
             Left = Maze[Aly][Alx-1]
+            print("Wall : ",wall," Right : ",Rigt," Left : ",Left)
             if Rigt != Left:
                 Maze[Aly][Alx] = " "
                 if Rigt < Left:
                     Maze = Transform(Maze,Left,Rigt)
                 else:
                     Maze = Transform(Maze,Rigt,Left)
-    for i in range(len(Maze)):
-        Maze[i] = "".join(Maze[i])
+            #print(showmaze(Adapt(FusionAdapt(Maze))))
+    Maze = FusionAdapt(Maze)
     Maze = Adapt(Maze)
     return Maze
 
@@ -199,10 +203,21 @@ def Transform(Maz,Last,New):
             Maze[i][Maze[i].index(Last)] = New
     return Maze
 
-def MazeFinish(Maze):
+def MazeFinish(Maze,w,h):
     Finish = True
-    nbr = len(Maze[1])/2
-    for i in range(len(Maze)):
-        if Maze.count("0") != nbr:
+    nbr = w
+    for i in range(h):
+        if Maze[2*i+1].count("0") != nbr:
               Finish = False
+              if Maze[2*i+1].count("0") == 9 and 2*i+1==19 :
+                  print(showmaze(Adapt(FusionAdapt(Maze))))
+              print("Nbr de 0 :",Maze[2*i+1].count("0")," y : ",2*i+1)
     return Finish
+
+def FusionAdapt(Maz):
+    Maze = Maz
+    for i in range(len(Maze)):
+        Maze[i] = "".join(Maze[i])
+    return Maze
+
+#Fusion(10,10)
