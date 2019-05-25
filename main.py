@@ -6,17 +6,18 @@ from ia import *
 def main():
     global canvas
     canvas = affichetk()
+    canvas.mainloop()
     #Maze = ["+--+-----+---------+","|  |     |         |","|  +  +  |  +  +   |","|     |  +  |  |   |","|     |     |  |   |","|  +--+--+--+  |   |","|  |     |  +--+   |","|  +  +  |         |","|     |  |  +------+","+-----+  |  |      |","|        |  |   +  |","|  +-----+  +   |  |","|  |            |  |","|  |  +---------+  |","|  |            |  |","|  |  +-----+---+  |","|  |        |      |","|  +-----+  +------+","|        |         |","+--------+---------+]"]
     #Maze = mazeborder(10,10)
     
 
-def affichetk():
+def affichetk():                                            # affiche la fenêtre du labyrinthe
     window = tkinter.Tk()
     
     MenuBar = tkinter.Menu(window)
     M1 = tkinter.Menu(MenuBar, tearoff=0)
     M1.add_command(label="Crée", command=Test)
-    M1.add_command(label="Résoudre", command=print(11))
+    M1.add_command(label="Résoudre", command=Djisktratk)
     M1.add_command(label="Graph", command=showgraph)
     M1.add_separator() 
     M1.add_command(label="Importer", command=ImportFile)
@@ -29,7 +30,7 @@ def affichetk():
     M2.add_separator() 
     M2.add_command(label="Droite", command=print(10))
     M2.add_command(label="A*", command=print(10))
-    M2.add_command(label="Djisktra", command=print(10))
+    M2.add_command(label="Djisktra", command=Djisktratk)
 
     M3 = tkinter.Menu(MenuBar, tearoff=0)
     M3.add_command(label="Pacman", command=print(10))
@@ -58,7 +59,7 @@ def affichetk():
     
     return canvas
 
-def Test():
+def Test():                                             # affiche la fenêtre qui permet de créer le labyrinthe
     fenetre = tkinter.Tk()
 
     global ScaleX
@@ -88,7 +89,7 @@ def Test():
     frame3.pack()
 
     
-def Mazetk():
+def Mazetk():                                           # fonction qui gère les choix du menu "labyrinthe"
     x = ScaleX.get()
     y = ScaleY.get()
     canvas.delete("all")
@@ -99,6 +100,8 @@ def Mazetk():
 
 def showgraph():
     showgraphTk(canvas,Maze)
-    
+
+def Djisktratk():
+    showsolvedTk(canvas,Maze)
 main()
 #showmaze(Fusion(10,10))

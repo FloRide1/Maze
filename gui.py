@@ -1,13 +1,13 @@
 from tkinter import filedialog
 import tkinter
-from ia import getGraph
+from ia import *
 from random import choice
 
-def showmaze(Maze):
+def showmaze(Maze):                             # affiche le labyrinthe dans la console
     print("\n".join(Maze))
     
 	
-def showmazetk(canvas,Maze):
+def showmazetk(canvas,Maze):                    # affiche le labyrinthe dans canvas
     minimum = 20
     maximum = 980
     height = len(Maze)
@@ -40,7 +40,7 @@ def showmazetk(canvas,Maze):
                 canvas.create_rectangle(minimum+ratiowidth*(j-0.75),minimum+ratioheight*(i-0.75),minimum+ratiowidth*(j+0.75),minimum+ratioheight*(i+0.75),fill="orange")
         Maze[i] = "".join(Maze[i])
 
-def showgraphTk(canvas,Maze):
+def showgraphTk(canvas,Maze):                   #affiche le graphe dans canvas
     minimum = 20
     maximum = 980
     height = len(Maze)
@@ -69,18 +69,39 @@ def showgraphTk(canvas,Maze):
         y = Spos[i][1]
         create_circle(minimum+ratiowidth*x,minimum+ratioheight*y,(ratiowidth+ratioheight)/2/8,canvas)
                        
-    
-def create_circle(x, y, r, canvasName):
+def showsolvedTk(canvas,Maze):                      #trace le plus court chemin pour sortir du labyrinthe
+    minimum = 20
+    maximum = 980
+    height = len(Maze)
+    width = len(Maze[0])
+    ratiowidth = maximum/width
+    ratioheight = maximum/height
+    Graph = Djisktra(Maze)
+    S = Graph[0]
+    A = Graph[1]
+    Spos= Graph[2]
+    P = Graph[3]
+    for i in range(len(P)):
+        for j in range(len(P[i])):
+            if j != 0:
+                a = P[i][j-1][0]
+                b = P[i][j-1][1]
+                x = P[i][j][0]
+                y = P[i][j][1]
+                #create_circle(minimum+ratiowidth*x,minimum+ratioheight*y,3,canvas)
+                canvas.create_line(minimum+ratiowidth*a,minimum+ratioheight*b,minimum+ratiowidth*x,minimum+ratioheight*y,width=(ratiowidth+ratioheight)/20, fill="red")
+
+def create_circle(x, y, r, canvasName):             # crée et trace les points de connexions sur le graphe
     color = "#"
     for c in range(6):
-        color = color + choice(["1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"])
+        color = color + choice(["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"])
     x0 = x - r
     y0 = y - r
     x1 = x + r
     y1 = y + r
     return canvasName.create_oval(x0, y0, x1, y1,fill=color)
 
-def Plus(Maze,x,y):
+def Plus(Maze,x,y):                                 # permet de connaître les murs(dans le labyrinthe adapté dans la console) qui entourent la case pour pouvoir tracer le labyrinthe dans canvas (showmazetk)
     pos = [0,0,0,0]
     h = len(Maze)
     w = len(Maze[0])  
@@ -98,13 +119,13 @@ def Plus(Maze,x,y):
             pos[3] = "B"
     return pos
 
-def ExportFile():
+def ExportFile():                                   # gère le clic sur "exporter" du menu "labyrinthe"
     f=tkinter.filedialog.asksaveasfile(
     title="Enregistrer le labyrinthe",
     filetypes=[('MAZE files','.maze')])
     print(f.name)
 
-def ImportFile():
+def ImportFile():                                   # gère le clic sur "importer" du menu "labyrinthe"
     f=tkinter.filedialog.askopenfilename(
     title="Ouvrir une labyrinthe",
     filetypes=[('MAZE files','.maze')])

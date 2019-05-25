@@ -1,7 +1,7 @@
 from random import *
 from gui import *
 
-def backtracking(x,y,w,h):
+def backtracking(x,y,w,h):      #retourne le labyrinthe sous forme d'un tableau de string                #
     Maze = mazeborder(w,h)
     temp = list(Maze[y])
     temp[x] = "0"
@@ -54,7 +54,7 @@ def backtracking(x,y,w,h):
     Maze[h*2-1] = "".join(temp)
     return Maze
 
-def mazeborder(width,height):
+def mazeborder(width,height):                 #retourne une grille de travail pour pouvoir créer le labyrinthe          
     Maze = [[] * width for _ in range(height*2+1)]
     for i in range(height*2+1):
         if i % 2 ==  0:
@@ -63,7 +63,7 @@ def mazeborder(width,height):
             Maze[i]="".join(["|"," |" * (width)])
     return Maze
 
-def Visit(Maze,x,y):
+def Visit(Maze,x,y):                        # retourne untableau de 4 caractères qui permet de savoir quelles cases adjacentes ont été visitées (utilisé dans backtracking)
     h = len(Maze)
     w = len(Maze[0])
     pos = [0,0,0,0]
@@ -81,7 +81,7 @@ def Visit(Maze,x,y):
             pos[3] = "B"
     return pos
 
-def ChangePos(Maze,x,y):
+def ChangePos(Maze,x,y):            
     Posib = Visit(Maze,x,y)
     while 0 in Posib:
         Posib.remove(0)
@@ -99,14 +99,14 @@ def ChangePos(Maze,x,y):
             Result = [x,y-2,0,1]
     return Result
 
-def Finish(Maze):
+def Finish(Maze):                           
     Result = True
     for i in Maze:
         if " " in i:
             Result = False
     return Result
 
-def Adapt(Maze):
+def Adapt(Maze):                # recrée un labyrinthe sous forme d'un tableau de string plus adapté à l'affichage dans une console
     for y in range(len(Maze)):
         if "?" in Maze[y]:
             Maze[y] = " ".join((Maze[y]).split("?"))
@@ -154,7 +154,7 @@ def Adapt(Maze):
             Maze[y] = "".join(temp)
     return Maze
 
-def Fusion(w,h):
+def Fusion(w,h):                                # algorithme de création d'un labyrinthe par fusion pas utilisé dans le programme
     Maze = mazeborder(w,h)
     nbr = 0
     for i in range(h):
@@ -196,14 +196,14 @@ def Fusion(w,h):
     Maze = Adapt(Maze)
     return Maze
 
-def Transform(Maz,Last,New):
+def Transform(Maz,Last,New):                        #utilisé dans fusion (pas utilisé dans le programme)
     Maze = Maz
     for i in range(len(Maze)):
         for j in range(Maze[i].count(Last)):
             Maze[i][Maze[i].index(Last)] = New
     return Maze
 
-def MazeFinish(Maze,w,h):
+def MazeFinish(Maze,w,h):                           #pas utilisé dans le programme
     Finish = True
     nbr = w
     for i in range(h):
@@ -214,7 +214,7 @@ def MazeFinish(Maze,w,h):
               print("Nbr de 0 :",Maze[2*i+1].count("0")," y : ",2*i+1)
     return Finish
 
-def FusionAdapt(Maz):
+def FusionAdapt(Maz):                               #pas utilisé dans le programme
     Maze = Maz
     for i in range(len(Maze)):
         Maze[i] = "".join(Maze[i])
